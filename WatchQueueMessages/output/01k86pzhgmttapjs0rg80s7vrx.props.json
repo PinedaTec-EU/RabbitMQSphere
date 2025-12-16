@@ -1,0 +1,21 @@
+{
+  "MessageId": "5ef5623d-5138-42d2-b1e2-48bece8a0b77",
+  "Properties": {
+    "AppId": null,
+    "ClusterId": null,
+    "ContentEncoding": null,
+    "ContentType": null,
+    "CorrelationId": null,
+    "DeliveryMode": 1,
+    "Expiration": null,
+    "Headers": null,
+    "MessageId": null,
+    "Persistent": false,
+    "Priority": 0,
+    "ReplyTo": null,
+    "ReplyToAddress": null,
+    "Timestamp": {},
+    "Type": null,
+    "UserId": null
+  }
+}
