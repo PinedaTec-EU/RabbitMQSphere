@@ -1,0 +1,11 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="../Accounts/CreateAccountsAndPassengers/CreateAccountsAndPassengers.csproj" />
+  <Project Path="DeadLetterRescue/DeadLetterRescue.csproj" />
+  <Project Path="SendMessageToExchange/SendMessageToExchange.csproj" />
+  <Project Path="WatchQueueMessages/WatchQueueMessages.csproj" />
+</Solution>
