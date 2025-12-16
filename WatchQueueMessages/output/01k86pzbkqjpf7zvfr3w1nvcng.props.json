@@ -1,0 +1,21 @@
+{
+  "MessageId": "cfae11f6-985d-4de7-ab51-280ec7e545e3",
+  "Properties": {
+    "AppId": null,
+    "ClusterId": null,
+    "ContentEncoding": null,
+    "ContentType": null,
+    "CorrelationId": null,
+    "DeliveryMode": 1,
+    "Expiration": null,
+    "Headers": null,
+    "MessageId": null,
+    "Persistent": false,
+    "Priority": 0,
+    "ReplyTo": null,
+    "ReplyToAddress": null,
+    "Timestamp": {},
+    "Type": null,
+    "UserId": null
+  }
+}

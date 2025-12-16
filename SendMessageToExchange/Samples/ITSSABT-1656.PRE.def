@@ -1,0 +1,28 @@
+{
+    "protocol": "mqtt",
+    "server": "itssuite-pre.gmv.es",
+    "port": 30167,
+    "user": "test",
+    "password": "test",
+    "vhost": "suite",
+    "exchange": "amq.topic",
+    "routingKey": "GMV.ITS.Suite.QueueMessages.Tap.OfflineTap",
+    "messageType": "GMV.ITS.Suite.QueueMessages.Tap.OfflineTap",
+    "variables": {
+        "issueNumber": {
+            "type": "fixed",
+            "value": "000000001656"
+        },
+        "tapTimeStamp": {
+            "type": "date",
+            "from": "2025-10-01T00:00:00Z",
+            "to": "2025-10-31T23:59:59Z"
+        }
+    },
+    "payloads": [
+        {
+            "path": "TestCases/ITSSABT-1656.TestPRECase.01.json",
+            "count": 5
+        }
+    ]
+}

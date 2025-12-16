@@ -1,0 +1,15 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"dotnet.defaultSolution": "SendMessageToExchange.slnx",
+		"dotnet.formatting.organizeImportsOnFormat": true,
+		"csharpOrganizeUsings.sortOrder": "Microsoft System",
+		"files.associations": {
+			"*.def": "json"
+		}
+	}
+}

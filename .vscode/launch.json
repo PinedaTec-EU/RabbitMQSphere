@@ -1,0 +1,47 @@
+{
+    "configurations": [
+        {
+            "name": "C#: SendMessageToExchange",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/SendMessageToExchange/bin/Debug/net10.0/SendMessageToExchange.dll",
+            "args": [
+                "--debug",
+                "--def",
+                "${workspaceFolder}/SendMessageToExchange/Samples/ITSSABT-791.local.def"
+            ],
+            "cwd": "${workspaceFolder}/SendMessageToExchange",
+            "stopAtEntry": false,
+            "preLaunchTask": "Build RabbitMQ tools"
+        },
+        {
+            "name": "C#: SendMessageToExchange MQTT",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/SendMessageToExchange/bin/Debug/net10.0/SendMessageToExchange.dll",
+            "args": [
+                "--debug",
+                "--def",
+                "${workspaceFolder}/SendMessageToExchange/Samples/ITSSABT-1784.PRE.def"
+            ],
+            "cwd": "${workspaceFolder}/SendMessageToExchange",
+            "stopAtEntry": false,
+            "preLaunchTask": "Build RabbitMQ tools"
+        },
+        {
+            "name": "C#: WatchQueueMessages",
+            "type": "coreclr",
+            "request": "launch",
+            "program": "${workspaceFolder}/WatchQueueMessages/bin/Debug/net10.0/WatchQueueMessages.dll",
+            "args": [
+                "--queue",
+                "TapProcessor_OfflineTap",
+                "--output",
+                "${workspaceFolder}/WatchQueueMessages/output/"
+            ],
+            "cwd": "${workspaceFolder}/WatchQueueMessages",
+            "stopAtEntry": false,
+            "preLaunchTask": "Build RabbitMQ tools"
+        }
+    ]
+}

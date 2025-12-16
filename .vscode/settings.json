@@ -1,0 +1,18 @@
+{
+    "files.exclude": {
+        "**/.store": true,
+        "**/.vs": true,
+        "**/bin": true,
+        "**/obj": true,
+        "**.DS_Store": true
+    },
+    "dotnet.defaultSolution": "rabbitmq.tools.slnx",
+    "[csharp]": {
+        "editor.codeActionsOnSave": [
+            "source.organizeImports"
+        ]
+    },
+    "files.associations": {
+        "*.def": "json"
+    }
+}
