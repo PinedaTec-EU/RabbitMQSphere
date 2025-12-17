@@ -148,7 +148,7 @@ public abstract class MessageProcessorBase
         {
             Console.WriteLine($"Sent all messages. [{_messagesPerIteration} payload(s) per iteration x {_count} iterations = {totalMessages} messages]");
             Console.WriteLine(
-                    $"Spents {_executionTimeWatch.Elapsed} to sent messages. {Math.Round(totalMessages / _executionTimeWatch.Elapsed.TotalSeconds, 3)} messages per second");
+                    $"Spent {_executionTimeWatch.Elapsed} to send messages. {Math.Round(totalMessages / _executionTimeWatch.Elapsed.TotalSeconds, 3)} messages per second");
         }
 
         TryPersistSequenceProgress(totalMessages);

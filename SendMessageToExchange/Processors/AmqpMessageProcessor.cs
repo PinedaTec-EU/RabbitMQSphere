@@ -49,7 +49,7 @@ public class AmqpMessageProcessor : MessageProcessorBase
             Port = port
         };
 
-        Console.WriteLine($"Connecting to ampq://{_opts.Server}:{port} as {_opts.User} on vhost '{_opts.VirtualHost}'...");
+        Console.WriteLine($"Connecting to amqp://{_opts.Server}:{port} as {_opts.User} on vhost '{_opts.VirtualHost}'...");
 
         await using var conn = await factory.CreateConnectionAsync();
         var chOpts = new CreateChannelOptions(
