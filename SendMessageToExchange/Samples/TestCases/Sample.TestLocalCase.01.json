@@ -1,0 +1,13 @@
+{
+    "Content": {
+        "Status": "Ok",
+        "MediumToken": "722763018733",
+        "AccountId": "10000000-1972-ffff-0018-{{issueNumber}}",
+        "TimeStamp": "2030-12-30T05:00:00Z",
+        "Latitude": 0.07694150231636199,
+        "Longitude": 0.5958837329390849,
+        "VehicleId": "{{organization}}-{{vehicleplate}}"
+    },
+    "MessageType": "Tap",
+    "TimeStamp": "2030-12-30T05:00:00Z"
+}
