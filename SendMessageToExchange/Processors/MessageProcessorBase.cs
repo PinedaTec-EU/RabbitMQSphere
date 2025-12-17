@@ -140,9 +140,16 @@ public abstract class MessageProcessorBase
     protected Task ExecutionFinishedAsync(int totalMessages)
     {
         Console.WriteLine();
-        Console.WriteLine($"Sent all messages. [{_messagesPerIteration} payload(s) per iteration x {_count} iterations = {totalMessages} messages]");
-        Console.WriteLine(
-                $"Spents {_executionTimeWatch.Elapsed} to sent messages. {Math.Round(totalMessages / _executionTimeWatch.Elapsed.TotalSeconds, 3)} messages per second");
+        if (_opts.Validate)
+        {
+            Console.WriteLine($"Validation completed successfully. [{_messagesPerIteration} payload(s) per iteration x {_count} iterations = {totalMessages} messages would be sent]");
+        }
+        else
+        {
+            Console.WriteLine($"Sent all messages. [{_messagesPerIteration} payload(s) per iteration x {_count} iterations = {totalMessages} messages]");
+            Console.WriteLine(
+                    $"Spents {_executionTimeWatch.Elapsed} to sent messages. {Math.Round(totalMessages / _executionTimeWatch.Elapsed.TotalSeconds, 3)} messages per second");
+        }
 
         TryPersistSequenceProgress(totalMessages);
 

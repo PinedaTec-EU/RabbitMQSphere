@@ -10,6 +10,7 @@ public class SendMessageOptions
     public string VirtualHost { get; set; } = "/";
     public int? Port { get; set; } = null;
     public bool Debug { get; set; }
+    public bool Validate { get; set; }
     public string? MqttProtocolVersion { get; set; }
 
     public static SendMessageOptions? Parse(string[] args)
@@ -28,6 +29,9 @@ public class SendMessageOptions
                 case "--debug":
                     opts.Debug = true;
                     break;
+                case "--validate":
+                    opts.Validate = true;
+                    break;
             }
         }
 
@@ -41,9 +45,10 @@ public class SendMessageOptions
 
     public static void PrintHelp()
     {
-        Console.WriteLine("Usage: SendMessageToExchange --def <path_to_json>");
+        Console.WriteLine("Usage: SendMessageToExchange --def <path_to_json> [options]");
         Console.WriteLine("  --def        Path to the definition JSON file (required)");
         Console.WriteLine("  --debug      Enable verbose console messages (optional)");
+        Console.WriteLine("  --validate   Validate the definition file without sending messages (optional)");
         Console.WriteLine();
         Console.WriteLine("Server, credentials, protocol, and port are defined inside the definition file.");
     }
