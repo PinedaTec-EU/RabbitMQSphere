@@ -20,6 +20,25 @@ public class AmqpMessageProcessor : MessageProcessorBase
 
         cancellationToken.ThrowIfCancellationRequested();
 
+        if (_opts.Validate)
+        {
+            Console.WriteLine("Validation mode enabled. Skipping connection and message sending.");
+            Console.WriteLine($"Definition validation successful.");
+            Console.WriteLineIfDebug($"Would connect to amqp://{_opts.Server}:{(_opts.Port ?? 5672)} as {_opts.User} on vhost '{_opts.VirtualHost}'");
+            Console.WriteLineIfDebug($"Would send {_scheduledPayloads.Length} message(s) to exchange '{_defaultExchange}' with routing key '{_defaultRoutingKey}'");
+            
+            // Validate payloads can be built without actually sending
+            foreach (var payload in _scheduledPayloads)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var body = BuildPayloadBody(payload);
+                Console.WriteLineIfDebug($"Validated '{Path.GetFileName(payload.Definition.Path)}' -> '{payload.Exchange}'/'{payload.RoutingKey}' ({body.Length} bytes).");
+            }
+            
+            await base.ExecutionFinishedAsync(_scheduledPayloads.Length);
+            return;
+        }
+
         int port = _opts.Port ?? 5672;
         var factory = new ConnectionFactory()
         {
@@ -30,7 +49,7 @@ public class AmqpMessageProcessor : MessageProcessorBase
             Port = port
         };
 
-        Console.WriteLine($"Connecting to ampq://{_opts.Server}:{port} as {_opts.User} on vhost '{_opts.VirtualHost}'...");
+        Console.WriteLine($"Connecting to amqp://{_opts.Server}:{port} as {_opts.User} on vhost '{_opts.VirtualHost}'...");
 
         await using var conn = await factory.CreateConnectionAsync();
         var chOpts = new CreateChannelOptions(
