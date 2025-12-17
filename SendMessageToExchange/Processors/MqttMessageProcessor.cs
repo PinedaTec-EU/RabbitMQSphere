@@ -23,6 +23,26 @@ public class MqttMessageProcessor : MessageProcessorBase
             return;
         }
 
+        if (_opts.Validate)
+        {
+            Console.WriteLine("Validation mode enabled. Skipping connection and message sending.");
+            Console.WriteLine($"Definition validation successful.");
+            Console.WriteLineIfDebug($"Would connect to mqtt://{_opts.Server}:{(_opts.Port ?? 1883)} as {_opts.User} on vhost '{_opts.VirtualHost}'");
+            Console.WriteLineIfDebug($"Would send {_scheduledPayloads.Length} message(s) to topic '{_defaultExchange}'");
+            
+            // Validate payloads can be built without actually sending
+            foreach (var payload in _scheduledPayloads)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var body = BuildPayloadText(payload);
+                var topic = string.IsNullOrWhiteSpace(payload.RoutingKey) ? payload.Exchange : payload.RoutingKey;
+                Console.WriteLineIfDebug($"Validated '{Path.GetFileName(payload.Definition.Path)}' -> MQTT topic '{topic}' (payload length {body.Length} chars).");
+            }
+            
+            await base.ExecutionFinishedAsync(_scheduledPayloads.Length);
+            return;
+        }
+
         Console.WriteLine("MQTT protocol is still experimental. Use with caution.");
 
         var userName = BuildMqttUsername();

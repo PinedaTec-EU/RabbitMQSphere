@@ -15,12 +15,14 @@ SendMessageToExchange is a flexible publisher harness for RabbitMQ/MQTT that loa
 
 Run via:
 ```bash
-dotnet SendMessageToExchange.dll --def <path/to/definition.json>
+dotnet SendMessageToExchange.dll --def <path/to/definition.json> [options]
 ```
 
-| Option         | Required | Description                                                  |
-| -------------- | -------- | ------------------------------------------------------------ |
-| `--def <file>` | Yes      | Definition JSON (payload templates, variables, count, etc.). |
+| Option         | Required | Description                                                              |
+| -------------- | -------- | ------------------------------------------------------------------------ |
+| `--def <file>` | Yes      | Definition JSON (payload templates, variables, count, etc.).             |
+| `--debug`      | No       | Enable verbose console messages for debugging and troubleshooting.       |
+| `--validate`   | No       | Validate the definition file without sending messages to the broker.     |
 
 All connectivity settings (protocol, server, port, credentials, vhost) live inside the definition file and fall back to the same defaults the CLI exposed previously.
 
@@ -321,6 +323,50 @@ Save the template next to the definition or update the `path` accordingly.
 
 ---
 
+## Validation Mode
+
+The `--validate` option allows you to verify your definition file without actually sending messages to the broker. This is particularly useful for:
+
+- **Testing configuration changes** before deploying to production
+- **Verifying template syntax** and variable definitions
+- **Checking payload generation** without broker connectivity
+- **Validating definition files** as part of CI/CD pipelines
+
+When validation mode is enabled:
+1. The definition file is loaded and parsed
+2. Connection settings are validated (but no connection is established)
+3. All payload templates are processed and rendered
+4. Variable substitution and random value generation are performed
+5. Export files are created (if export is enabled in the definition)
+6. A summary is displayed showing what would have been sent
+
+Example usage:
+```bash
+# Basic validation
+dotnet SendMessageToExchange.dll --def definition.json --validate
+
+# Validation with detailed output
+dotnet SendMessageToExchange.dll --def definition.json --validate --debug
+```
+
+Output example:
+```
+SendMessageToExchange starting...
+Validation mode enabled. Skipping connection and message sending.
+Definition validation successful.
+
+Validation completed successfully. [3 payload(s) per iteration x 2 iterations = 6 messages would be sent]
+```
+
+With `--debug` enabled, you'll see additional details about what would have been sent:
+```
+Would connect to amqp://localhost:5672 as guest on vhost '/'
+Would send 6 message(s) to exchange 'amq.topic' with routing key 'MyMessageType'
+Validated 'TapEvent.json' -> 'amq.topic'/'MyMessageType' (1292 bytes).
+```
+
+---
+
 ## Workflow Overview
 1. CLI parses options and loads the definition file.
 2. `PayloadBuilderProcessor` expands payload templates per iteration, evaluating variables and random values upfront when necessary.
@@ -373,6 +419,7 @@ Result:
 ---
 
 ## Operational Tips
+- **Validation first:** Use `--validate` to test your definition file before sending to production. This helps catch configuration errors early without affecting your broker.
 - **Dry runs:** Point the definition's `server`/`port` to a local broker and enable exports to inspect payloads before sending to production.
 - **Parallel tuning:** Increase the `threads` value in the definition only if the target broker can handle the load; otherwise rely on sequential publishing.
 - **Variable reuse:** Move shared variables to the top-level `variables` block to avoid duplicating definitions across payloads.
