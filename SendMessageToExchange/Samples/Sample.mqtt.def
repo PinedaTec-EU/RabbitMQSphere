@@ -1,0 +1,48 @@
+{
+    "protocol": "mqtt",
+    "port": 1883,
+    "exchange": "amq.topic",
+    "routingKey": "OfflineTap",
+    "messageType": "Tap.OfflineTapEvent",
+    "threads": 0,
+    "variables": {
+        "organization": {
+            "type": "fixed",
+            "value": "XXXXXX"
+        },
+        "CorrelationId": {
+            "type": "guid"
+        },
+        "StaticTenant": "Issue#1972",
+        "issueNumber": {
+            "type": "fixed",
+            "value": "000000001972"
+        },
+        "Sequence": {
+            "type": "sequence",
+            "start": 100,
+            "padding": 6
+        }
+    },
+    "export": {
+        "enabled": true,
+        "overwrite": true,
+        "template": "Exports/{{StaticTenant}}/TapPayload-{{sequence}}.json"
+    },
+    "payloads": [
+        {
+            "path": "TestCases/Sample.TestLocalCase.01.json",
+            "count": 1,
+            "variables": {
+                "organization": {
+                    "type": "fixed",
+                    "value": "PINEDATEC"
+                },
+                "vehicleplate": {
+                    "type": "fixed",
+                    "value": "0000MMF"
+                }
+            }
+        }
+    ]
+}
