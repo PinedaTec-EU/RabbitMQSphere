@@ -1,4 +1,5 @@
 **/bin
 **/obj
 **/Exports
+**/wwwroot/lib
 !.vscode
