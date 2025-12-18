@@ -1,0 +1,91 @@
+﻿@inherits LayoutComponentBase
+@inject IStringLocalizer<Shared> Localizer
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+
+<div class="min-vh-100 d-flex flex-column">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-pineda">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-brain me-2"></i>PinedaTec
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="fas fa-home me-1"></i>@Localizer["Home"]
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/" aria-label="@Localizer["AssistantMarkus"]" title="@Localizer["AssistantMarkus"]">
+                            <i class="fas fa-robot me-1"></i>@Localizer["AssistantMarkus"]
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://www.linkedin.com/in/jmrpineda" target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-linkedin me-1"></i>@Localizer["LinkedIn"]
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://www.linkedin.com/newsletters/edge-ia-driven-7365504409641848832/" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-newspaper me-1"></i>@Localizer["Newsletter"]
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle language-selector" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-language me-1"></i>@Localizer["Language"]
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                            <li><a class="dropdown-item" href="#" @onclick="@(() => ChangeLanguage("en"))" @onclick:preventDefault>English</a></li>
+                            <li><a class="dropdown-item" href="#" @onclick="@(() => ChangeLanguage("es"))" @onclick:preventDefault>Español</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow-1">
+        @Body
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-pineda mt-auto">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p class="mb-0">@Localizer["Copyright"]</p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <a href="#" class="me-3">@Localizer["Contact"]</a>
+                    <a href="#">@Localizer["Privacy"]</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<div id="blazor-error-ui" data-nosnippet>
+    An unhandled error has occurred.
+    <a href="." class="reload">Reload</a>
+    <span class="dismiss">🗙</span>
+</div>
+
+@code {
+    private async Task ChangeLanguage(string culture)
+    {
+        var uri = new Uri(Navigation.Uri)
+            .GetComponents(UriComponents.PathAndQuery, UriFormat.Unescaped);
+        var cultureEscaped = Uri.EscapeDataString(culture);
+        var uriEscaped = Uri.EscapeDataString(uri);
+
+        Navigation.NavigateTo(
+            $"?culture={cultureEscaped}&redirectUri={uriEscaped}",
+            forceLoad: true);
+    }
+}
