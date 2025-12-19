@@ -12,13 +12,21 @@ public class Article
     public string GetTitle(string language)
     {
         var text = Texts.FirstOrDefault(t => t.Language == language);
-        return text?.Title ?? Texts.FirstOrDefault()?.Title ?? string.Empty;
+        if (text != null)
+            return text.Title;
+        
+        var fallback = Texts.FirstOrDefault();
+        return fallback?.Title ?? string.Empty;
     }
     
     public string GetExcerpt(string language)
     {
         var text = Texts.FirstOrDefault(t => t.Language == language);
-        return text?.Excerpt ?? Texts.FirstOrDefault()?.Excerpt ?? string.Empty;
+        if (text != null)
+            return text.Excerpt;
+        
+        var fallback = Texts.FirstOrDefault();
+        return fallback?.Excerpt ?? string.Empty;
     }
 }
 

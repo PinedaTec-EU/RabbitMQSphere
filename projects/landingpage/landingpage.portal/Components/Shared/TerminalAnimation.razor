@@ -66,6 +66,8 @@
 
     private async Task AnimateTerminal()
     {
+        _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource?.Dispose();
         _cancellationTokenSource = new CancellationTokenSource();
         
         try
