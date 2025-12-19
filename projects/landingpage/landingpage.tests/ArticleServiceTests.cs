@@ -18,8 +18,20 @@ public class ArticleServiceTests
         {
             Items = new List<Article>
             {
-                new Article { Id = "1", Title = "Test Article 1" },
-                new Article { Id = "2", Title = "Test Article 2" }
+                new Article { 
+                    Id = "1", 
+                    Texts = new List<ArticleText> 
+                    { 
+                        new ArticleText { Language = "en-US", Title = "Test Article 1", Excerpt = "Excerpt 1" } 
+                    }
+                },
+                new Article { 
+                    Id = "2", 
+                    Texts = new List<ArticleText> 
+                    { 
+                        new ArticleText { Language = "en-US", Title = "Test Article 2", Excerpt = "Excerpt 2" } 
+                    }
+                }
             },
             CurrentPage = 1,
             PageSize = 10,
@@ -104,8 +116,18 @@ public class ArticleServiceTests
         var expectedArticle = new Article 
         { 
             Id = "1", 
-            Title = "Test Article",
-            Content = "Test Content"
+            Texts = new List<ArticleText> 
+            { 
+                new ArticleText 
+                { 
+                    Language = "en-US", 
+                    Title = "Test Article", 
+                    Excerpt = "Test Content" 
+                } 
+            },
+            Url = "https://example.com",
+            Image = "./img/test.png",
+            PublishedDate = DateTime.UtcNow
         };
 
         mockRepository
@@ -120,7 +142,7 @@ public class ArticleServiceTests
         // Assert
         Assert.NotNull(result);
         Assert.Equal("1", result.Id);
-        Assert.Equal("Test Article", result.Title);
+        Assert.Equal("Test Article", result.GetTitle("en-US"));
         mockRepository.Verify(repo => repo.GetArticleByIdAsync("1", default), Times.Once);
     }
 

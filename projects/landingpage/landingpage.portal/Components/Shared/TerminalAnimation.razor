@@ -1,0 +1,217 @@
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<div class="terminal-container @(IsCollapsed ? "collapsed" : "")">
+    <div class="terminal-header" @onclick="ToggleCollapse">
+        <span class="terminal-title">
+            <i class="fas fa-terminal me-2"></i>System Console
+        </span>
+        <button class="terminal-toggle-btn" aria-label="Toggle terminal">
+            <i class="fas @(IsCollapsed ? "fa-chevron-down" : "fa-chevron-up")"></i>
+        </button>
+    </div>
+    
+    @if (!IsCollapsed)
+    {
+        <div class="terminal-body" id="terminal-output">
+            @foreach (var line in DisplayedLines)
+            {
+                <div class="terminal-line @GetLineClass(line.Type)">
+                    @if (line.Type == "loading")
+                    {
+                        <span class="terminal-prompt">&gt;</span>
+                    }
+                    else if (line.Type == "success")
+                    {
+                        <span class="terminal-check">✓</span>
+                    }
+                    <span>@line.Text</span>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private class TerminalLine
+    {
+        public string Text { get; set; } = string.Empty;
+        public string Type { get; set; } = "normal"; // normal, loading, success
+        public int Delay { get; set; }
+    }
+
+    private List<TerminalLine> AllLines = new()
+    {
+        new TerminalLine { Text = "Reasoning agent (Ollama) ready", Type = "loading", Delay = 500 },
+        new TerminalLine { Text = "SmartDoku activated", Type = "success", Delay = 800 },
+        new TerminalLine { Text = "MongoDB linked", Type = "success", Delay = 600 },
+        new TerminalLine { Text = "Observability layer online", Type = "success", Delay = 700 },
+        new TerminalLine { Text = "Fetching articles from the cloud...", Type = "loading", Delay = 1000 },
+        new TerminalLine { Text = "System initialized successfully.", Type = "success", Delay = 500 },
+        new TerminalLine { Text = "You can now explore the latest articles and insights.", Type = "success", Delay = 300 }
+    };
+
+    private List<TerminalLine> DisplayedLines = new();
+    private bool IsCollapsed = false;
+    private bool AnimationComplete = false;
+    private CancellationTokenSource? _cancellationTokenSource;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await AnimateTerminal();
+        }
+    }
+
+    private async Task AnimateTerminal()
+    {
+        _cancellationTokenSource = new CancellationTokenSource();
+        
+        try
+        {
+            foreach (var line in AllLines)
+            {
+                if (_cancellationTokenSource.Token.IsCancellationRequested)
+                    break;
+
+                DisplayedLines.Add(line);
+                StateHasChanged();
+                await Task.Delay(line.Delay, _cancellationTokenSource.Token);
+            }
+
+            AnimationComplete = true;
+            
+            // Auto-collapse after animation completes
+            await Task.Delay(2000, _cancellationTokenSource.Token);
+            IsCollapsed = true;
+            StateHasChanged();
+        }
+        catch (TaskCanceledException)
+        {
+            // Expected when component is disposed
+        }
+    }
+
+    private void ToggleCollapse()
+    {
+        IsCollapsed = !IsCollapsed;
+    }
+
+    private string GetLineClass(string type)
+    {
+        return type switch
+        {
+            "loading" => "terminal-loading",
+            "success" => "terminal-success",
+            _ => ""
+        };
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        _cancellationTokenSource?.Cancel();
+        _cancellationTokenSource?.Dispose();
+    }
+}
+
+<style>
+    .terminal-container {
+        background-color: #0d1117;
+        border: 1px solid #30363d;
+        border-radius: 6px;
+        margin: 2rem auto;
+        max-width: 900px;
+        font-family: 'Courier New', Consolas, monospace;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        transition: all 0.3s ease;
+    }
+
+    .terminal-container.collapsed {
+        max-height: 50px;
+    }
+
+    .terminal-header {
+        background-color: #161b22;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid #30363d;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .terminal-header:hover {
+        background-color: #1c2128;
+    }
+
+    .terminal-title {
+        color: #58a6ff;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .terminal-toggle-btn {
+        background: none;
+        border: none;
+        color: #8b949e;
+        cursor: pointer;
+        padding: 0.25rem 0.5rem;
+        font-size: 1rem;
+    }
+
+    .terminal-toggle-btn:hover {
+        color: #c9d1d9;
+    }
+
+    .terminal-body {
+        padding: 1rem;
+        min-height: 150px;
+        max-height: 300px;
+        overflow-y: auto;
+        background-color: #0d1117;
+    }
+
+    .terminal-line {
+        color: #c9d1d9;
+        margin-bottom: 0.5rem;
+        line-height: 1.6;
+        font-size: 0.9rem;
+    }
+
+    .terminal-loading {
+        color: #58a6ff;
+    }
+
+    .terminal-success {
+        color: #3fb950;
+    }
+
+    .terminal-prompt {
+        color: #58a6ff;
+        margin-right: 0.5rem;
+    }
+
+    .terminal-check {
+        color: #3fb950;
+        margin-right: 0.5rem;
+    }
+
+    .terminal-body::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .terminal-body::-webkit-scrollbar-track {
+        background: #161b22;
+    }
+
+    .terminal-body::-webkit-scrollbar-thumb {
+        background: #30363d;
+        border-radius: 4px;
+    }
+
+    .terminal-body::-webkit-scrollbar-thumb:hover {
+        background: #484f58;
+    }
+</style>

@@ -112,4 +112,7 @@
   <data name="LatestArticles" xml:space="preserve">
     <value>Últimos Artículos</value>
   </data>
+  <data name="LoadPrevious" xml:space="preserve">
+    <value>Cargar Artículos Anteriores</value>
+  </data>
 </root>

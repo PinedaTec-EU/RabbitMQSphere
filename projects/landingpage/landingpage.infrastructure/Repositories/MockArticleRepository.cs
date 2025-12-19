@@ -50,14 +50,25 @@ public class MockArticleRepository : IArticleRepository
         {
             articles.Add(new Article
             {
-                Id = $"article-{i}",
-                Title = $"AI-Driven Development: Article {i}",
-                Excerpt = $"This is an excerpt for article {i}. Learn about the latest trends in AI-driven software development, edge computing, and modern architecture patterns.",
-                Content = $"Full content for article {i}. Deep dive into AI technologies, machine learning operations, and how they're transforming the software development landscape.",
+                Id = $"01J8Z9A0B1C2D3E4F5G6H7Z8J{i}",
+                Texts = new List<ArticleText>
+                {
+                    new ArticleText
+                    {
+                        Language = "es-ES",
+                        Title = $"Desarrollo impulsado por IA: Artículo {i}",
+                        Excerpt = $"Este es un extracto del artículo {i}. Aprende sobre las últimas tendencias en desarrollo de software impulsado por IA, edge computing y patrones de arquitectura moderna."
+                    },
+                    new ArticleText
+                    {
+                        Language = "en-US",
+                        Title = $"AI-Driven Development: Article {i}",
+                        Excerpt = $"This is an excerpt for article {i}. Learn about the latest trends in AI-driven software development, edge computing, and modern architecture patterns."
+                    }
+                },
                 PublishedDate = DateTime.UtcNow.AddDays(-i),
-                Author = "José Manuel Redondo Pineda",
                 Url = $"https://www.linkedin.com/in/jmrpineda/article-{i}",
-                Tags = new List<string> { "AI", "Development", "Innovation", "Edge Computing" }
+                Image = $"./img/article-{i}.png"
             });
         }
 
