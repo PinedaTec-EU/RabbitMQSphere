@@ -51,7 +51,7 @@ Sample `deadletter.json` definition is not required, but here is how the file la
 ### 1. Archive DLQ messages to disk (JSON metadata)
 ```bash
 dotnet DeadLetterRescue.dll \
-  --dlq OfflineTap.DLQ \
+  --dlq OfflineTag.DLQ \
   --server rabbitmq.dev.local \
   --user dlq_reader \
   --password S3cret! \
@@ -67,12 +67,12 @@ Outcome:
 ```json
 {
   "MessageId": "f8c520e6a9e04824908724060f5dd7a1",
-  "RoutingKey": "GMV.ITS.Suite.QueueMessages.Tap.OfflineTap",
-  "Body": "{ \"tapId\": \"01HFW...\", \"status\": \"rejected\" }",
+  "RoutingKey": "Tag.OfflineTag",
+  "Body": "{ \"TagId\": \"01HFW...\", \"status\": \"rejected\" }",
   "Properties": {
     "ContentType": "application/json",
     "Headers": {
-      "x-message-type": "GMV.ITS.Suite.QueueMessages.Tap.OfflineTap"
+      "x-message-type": "Tag.OfflineTag"
     }
   }
 }
