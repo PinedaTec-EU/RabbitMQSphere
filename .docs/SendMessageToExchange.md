@@ -37,11 +37,11 @@ Minimal example definition (`definition.def`):
   "server": "rabbitmq.dev.local",
   "port": 5672,
   "user": "publisher",
-  "password": "Pa55!",
+  "password": "xxxxxxxxxxxxxxxxxx",
   "vhost": "/",
-  "messageType": "GMV.ITS.Suite.QueueMessages.Tap.OfflineTap",
+  "messageType": "Tag.OfflineTag",
   "exchange": "amq.topic",
-  "routingKey": "GMV.ITS.Suite.QueueMessages.Tap.OfflineTap",
+  "routingKey": "",
   "count": 2,
   "threads": 0,
   "formatting": {
@@ -58,12 +58,12 @@ Minimal example definition (`definition.def`):
   },
   "payloads": [
     {
-      "path": "payloads/TapEvent.json",
+      "path": "payloads/TagEvent.json",
       "count": 3,
       "variables": {
-        "TapId": { "type": "ulid" },
-        "TapSequence": { "type": "number", "min": 1000, "max": 9999 },
-        "TapLabel": { "value": "offline" }
+        "TagId": { "type": "ulid" },
+        "TagSequence": { "type": "number", "min": 1000, "max": 9999 },
+        "TagLabel": { "value": "offline" }
       }
     }
   ]
@@ -81,14 +81,14 @@ Connection properties (definition-level):
 | `user`     | No       | `guest`                       | Username for AMQP/MQTT authentication.    |
 | `password` | No       | `guest`                       | Password for AMQP/MQTT authentication.    |
 
-For MQTT connections the tool automatically prefixes the username with `"<vhost>:<user>"` when the virtual host is different from `/` and the configured user does not already include a colon. This matches the credential pattern expected by the RabbitMQ MQTT plugin (`mqtt://<vhost>:<user>:<password>@host`). If you prefer to manage the prefix yourself, define the username exactly as the broker expects (e.g., `"user": "suite:test"`), and it will be used as-is.
+For MQTT connections the tool automatically prefixes the username with `"<vhost>:<user>"` when the virtual host is different from `/` and the configured user does not already include a colon. This matches the credential pattern expected by the RabbitMQ MQTT plugin (`mqtt://<vhost>:<user>:<password>@host`). If you prefer to manage the prefix yourself, define the username exactly as the broker expects (e.g., `"user": "user:test"`), and it will be used as-is.
 
-> ⚠️ ITS Suite note: `messageType` and `routingKey` are typically identical. If you set both and they differ, the effective routing uses `routingKey` (global and per-payload). If they are the same, you only need to specify one.
+> ⚠️ Note: `messageType` and `routingKey` are sometimes identical. If you set both and they differ, the effective routing uses `routingKey` (global and per-payload). If they are the same, you only need to specify one.
 
 Key sections:
 - `variables`: global tokens available to every payload. Supports literals or random generators (`number`, `text`, `guid`, `ulid`, `datetime`, `date`, `time`).
 - `payloads`: list of template entries.
-  - Tokens like `{{TapId}}` are resolved whenever matching variables/context exist; missing variables throw an error.
+  - Tokens like `{{TagId}}` are resolved whenever matching variables/context exist; missing variables throw an error.
   - `count` duplicates the payload within each iteration.
   - Each payload can override/extend `variables`, `export`, and routing (`exchange`, `routingKey`, `messageType`).
 - `formatting`: optional object with `date`, `time`, and `datetime` entries that override the default `yyyy-MM-dd` / `HH:mm:ss` / `O` formats used by the random generators. Setting a `format` directly on a variable definition takes precedence over these global values.
@@ -156,7 +156,7 @@ When both a global `formatting` entry and a per-variable `format` are provided, 
 - Defaults: lexicographically sortable ULID.
 - Notes: Emits `Ulid.NewUlid()`, e.g., `01JABCD2EFGHJKL3MNOPQRSTUV`.
 ```json
-"TapId": { "type": "ulid" }
+"TagId": { "type": "ulid" }
 ```
 
 #### `datetime`
@@ -203,7 +203,7 @@ When both a global `formatting` entry and a per-variable `format` are provided, 
 - Defaults: literal value you supply.
 - Notes: Equivalent to writing a plain string; useful for schema consistency (e.g., `SampleTenant`). Fails if `value` is missing or empty.
 ```json
-"Tenant": { "type": "fixed", "value": "GMV-ITS" }
+"Tenant": { "type": "fixed", "value": "sample-tenant" }
 ```
 
 Literal variables can still embed other tokens (e.g., `"value": "order-{{context.index:D4}}"`), enabling derived names. Random definitions cache per message, so multiple template references share the same generated value within a payload.
@@ -214,16 +214,16 @@ Sequence example:
 "variables": {
   "InvoiceNumber": { "type": "sequence", "start": 1000, "padding": 4 },
   "BatchSequence": { "type": "sequence", "start": 5000, "step": 10 },
-  "FixedTenant": { "type": "fixed", "value": "GMV-ITS" }
+  "FixedTenant": { "type": "fixed", "value": "sample-tenant" }
 }
 ```
 
-For the first few payloads you would get `InvoiceNumber = 1000, 1001, 1002...` and `BatchSequence = 5000, 5010, 5020...`, aligning with the global `context.index`. `FixedTenant` always resolves to `GMV-ITS`.
+For the first few payloads you would get `InvoiceNumber = 1000, 1001, 1002...` and `BatchSequence = 5000, 5010, 5020...`, aligning with the global `context.index`. `FixedTenant` always resolves to `sample-tenant`.
 
 ### Payload configuration (`payloads` array)
 Each entry inside `payloads` controls how a template is rendered, duplicated, and routed.
 
-- String entry: `"payloads": ["payloads/TapEvent.json"]` — shorthand for an object with `count: 1` and only global variables/exports applied.
+- String entry: `"payloads": ["payloads/TagEvent.json"]` — shorthand for an object with `count: 1` and only global variables/exports applied.
 - Object entry: full control over duplication, variables, and routing overrides.
 
 Payload object properties:
@@ -249,13 +249,13 @@ Behavior and rules:
 #### Example: two payloads with different targets and export override
 ```json
 {
-  "messageType": "GMV.ITS.Suite.QueueMessages.Tap.OfflineTap",
+  "messageType": "Tag.OfflineTag",
   "exchange": "amq.topic",
-  "routingKey": "GMV.ITS.Suite.QueueMessages.Tap.OfflineTap",
+  "routingKey": "Tag.OfflineTag",
   "count": 2,
   "variables": {
     "GlobalCorrelationId": { "type": "guid" },
-    "Tenant": "GMV-ITS"
+    "Tenant": "sample-tenant"
   },
   "export": {
     "enabled": true,
@@ -263,19 +263,19 @@ Behavior and rules:
   },
   "payloads": [
     {
-      "path": "payloads/TapEvent.json",
+      "path": "payloads/TagEvent.json",
       "count": 3,
       "variables": {
-        "TapId": { "type": "ulid" },
-        "TapSequence": { "type": "sequence", "start": 100, "padding": 4 }
+        "TagId": { "type": "ulid" },
+        "TagSequence": { "type": "sequence", "start": 100, "padding": 4 }
       }
     },
     {
       "path": "payloads/AlertEvent.json",
       "count": 1,
       "exchange": "alerts.topic",
-      "routingKey": "Alerts.OfflineTap",
-      "messageType": "GMV.ITS.Suite.QueueMessages.Alert",
+      "routingKey": "Alerts.OfflineTag",
+      "messageType": "Alert",
       "variables": {
         "AlertId": { "type": "guid" },
         "Severity": { "value": "high" }
@@ -291,7 +291,7 @@ Behavior and rules:
 ```
 Results:
 - Two iterations. First payload: 3 sends per iteration → 6 messages to `amq.topic` using the root routing key.
-- Second payload: 1 send per iteration → 2 messages to `alerts.topic`/`Alerts.OfflineTap` with its own `messageType`.
+- Second payload: 1 send per iteration → 2 messages to `alerts.topic`/`Alerts.OfflineTag` with its own `messageType`.
 - Root export applies to the first payload. The second uses its own pattern and allows overwrite.
 
 ### Context Tokens
@@ -301,20 +301,20 @@ During rendering each payload receives a `PayloadProcessorContext`. The followin
 | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `{{context.index}}`                                                                 | 1-based running counter across all scheduled messages (respecting repetitions and iterations). Use standard formatting (e.g., `{{context.index}}` inside `string.Format` style or suffix logic) to produce padded values such as `D4`. |
 | `{{context.templateFilePath}}`                                                      | Absolute path of the template file currently being processed. Useful when export paths need to mirror the source structure.                                                                                                            |
-| `{{context.templateFileName}}`                                                      | File name (with extension) derived from the template path, e.g., `TapEvent.json`.                                                                                                                                                      |
+| `{{context.templateFileName}}`                                                      | File name (with extension) derived from the template path, e.g., `TagEvent.json`.                                                                                                                                                      |
 | `{{context.templateDirectory}}`                                                     | Directory component of the template path.                                                                                                                                                                                              |
-| `{{context.templateFileNameWithoutExtension}}` / `{{context.templateFileNameStem}}` | File name without the extension, e.g., `TapEvent`.                                                                                                                                                                                     |
+| `{{context.templateFileNameWithoutExtension}}` / `{{context.templateFileNameStem}}` | File name without the extension, e.g., `TagEvent`.                                                                                                                                                                                     |
 
 These context tokens are available everywhere templates are resolved (payload bodies and export path templates), so you can build file names such as `Exports/{{context.templateFileNameStem}}/{{context.index:D4}}.json`. Any identifier without the `context.` prefix is treated as a variable name. Every token accepts an optional `:format` suffix, so `{{InvoiceNumber:D6}}` or `{{context.index:D4}}` apply .NET-style numeric formatting without modifying the variable definition.
 
-- Template example referenced above (`payloads/TapEvent.json`):
+- Template example referenced above (`payloads/TagEvent.json`):
 
 ```json
 {
   "messageId": "{{GlobalCorrelationId}}",
-  "tapId": "{{TapId}}",
-  "sequence": "{{TapSequence}}",
-  "label": "{{TapLabel}}",
+  "tagId": "{{TagId}}",
+  "sequence": "{{TagSequence}}",
+  "label": "{{TagLabel}}",
   "contextual": "idx-{{context.index}} file={{context.templateFileName}}"
 }
 ```
@@ -362,7 +362,7 @@ With `--debug` enabled, you'll see additional details about what would have been
 ```
 Would connect to amqp://localhost:5672 as guest on vhost '/'
 Would send 6 message(s) to exchange 'amq.topic' with routing key 'MyMessageType'
-Validated 'TapEvent.json' -> 'amq.topic'/'MyMessageType' (1292 bytes).
+Validated 'TagEvent.json' -> 'amq.topic'/'MyMessageType' (1292 bytes).
 ```
 
 ---
@@ -389,7 +389,7 @@ dotnet SendMessageToExchange.dll --def definition.json
 ```
 Result:
 - Multiple payloads generated via template variables and sent to the specified exchange/routing key using the connection info stored in the definition (`protocol: "amqp"`, `server`, credentials, etc.).
-- Export files appear under the folder outlined in the sample (`Exports/.../TapEvent-0001.json`, etc.) based on your template expressions.
+- Export files appear under the folder outlined in the sample (`Exports/.../TagEvent-0001.json`, etc.) based on your template expressions.
 - Console output shows “OK <template name>” per message and final statistics.
 
 ### 2. MQTT replay with custom iterations/threads
@@ -424,7 +424,7 @@ Result:
 - **Parallel tuning:** Increase the `threads` value in the definition only if the target broker can handle the load; otherwise rely on sequential publishing.
 - **Variable reuse:** Move shared variables to the top-level `variables` block to avoid duplicating definitions across payloads.
 - **Context-aware file names:** Use `{{context.index}}` to guarantee unique outputs and to map send order.
-- **Sample library:** Keep your own `definition.json` and payload templates alongside the executable (e.g., `payloads/TapEvent.json`) so deployments stay self-contained.
+- **Sample library:** Keep your own `definition.json` and payload templates alongside the executable (e.g., `payloads/TagEvent.json`) so deployments stay self-contained.
 
 ---
 
