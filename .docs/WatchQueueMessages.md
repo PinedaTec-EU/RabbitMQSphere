@@ -51,7 +51,7 @@ By default there is no definition file—everything is CLI-driven—but here is 
     "ContentType": "application/json",
     "CorrelationId": "31aa...",
     "Headers": {
-      "x-message-type": "GMV.ITS.Suite.QueueMessages.Tap.OfflineTap"
+      "x-message-type": "Tag.OfflineTag"
     }
   }
 }
@@ -59,7 +59,7 @@ By default there is no definition file—everything is CLI-driven—but here is 
 - `output/01hf....json` (payload):
 ```json
 {
-  "tapId": "01HFZ3J1A6DYFZ6J0S5V7N7Z9C",
+  "TagId": "01HFZ3J1A6DYFZ6J0S5V7N7Z9C",
   "status": "processed",
   "timestamp": "2024-01-17T11:31:22Z"
 }
@@ -68,15 +68,15 @@ By default there is no definition file—everything is CLI-driven—but here is 
 ### 1. Capture JSON payloads from a queue
 ```bash
 dotnet WatchQueueMessages.dll \
-  --queue Tap.Offline.Events \
-  --output C:\Queues\offline-tap \
+  --queue Tag.Offline.Events \
+  --output C:\Queues\offline-Tag \
   --server rabbitmq.dev.local \
   --user inspector \
   --password S3cret! \
   --format json
 ```
 Result:
-- Files like `01hf3q1y6cyc5nhh0dte0d1b.props.json` and `01hf3q1y6cyc5nhh0dte0d1b.json` appear under `C:\Queues\offline-tap`.
+- Files like `01hf3q1y6cyc5nhh0dte0d1b.props.json` and `01hf3q1y6cyc5nhh0dte0d1b.json` appear under `C:\Queues\offline-Tag`.
 - The `.props.json` file includes the broker-generated properties, while the `.json` file contains the body exactly as received.
 - Every message is acknowledged after successful write.
 
