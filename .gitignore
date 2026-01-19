@@ -2,3 +2,4 @@
 **/obj
 **/Exports
 !.vscode
+.DS_Store
